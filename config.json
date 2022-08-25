@@ -1,0 +1,9 @@
+{
+    "threads": 2,
+    "port": 35400,
+    "adminPort": 35401,
+    "path": "./data",
+
+
+    "secret": "Yes"
+}
