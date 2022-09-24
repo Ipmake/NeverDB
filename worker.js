@@ -17,7 +17,7 @@ parentPort.on('message', (message) => {
                             var data = JSON.parse(fs.readFileSync(`./${workerData.config.path}/${db}/${key}.nve`, 'utf8'))
                         }
                         catch(e) {
-                            return parentPort.postMessage({ type: 'response', id: message.id, data: null, err: "DB or Key not found" })
+                            return parentPort.postMessage({ type: 'response', id: message.id, data: null, err: "DB or Key not found on get" })
                         }
         
                         parentPort.postMessage({
@@ -37,7 +37,8 @@ parentPort.on('message', (message) => {
                             fs.writeFileSync(`./${workerData.config.path}/${db}/${key}.nve`, JSON.stringify(data))
                         }
                         catch(e) {
-                            return parentPort.postMessage({ type: 'response', id: message.id, data: null, err: "DB or Key not found" })
+                            console.log(e)
+                            return parentPort.postMessage({ type: 'response', id: message.id, data: null, err: "DB or Key not found on post" })
                         }
 
                         parentPort.postMessage({
@@ -48,6 +49,23 @@ parentPort.on('message', (message) => {
                         })
 
                     break;
+
+                    case 'delete':
+                        var { requestType, db, key } = message
+
+                        try{
+                            fs.unlinkSync(`./${workerData.config.path}/${db}/${key}.nve`)
+                        }
+                        catch(e) {
+                            return parentPort.postMessage({ type: 'response', id: message.id, data: null, err: "DB or Key not found on delete" })
+                        }
+
+                        parentPort.postMessage({
+                            type: 'response',
+                            requestType: requestType,
+                            data: null,
+                            id: message.id
+                        })
 
                 }
             })()
